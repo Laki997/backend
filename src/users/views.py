@@ -1,15 +1,8 @@
 from src.users.serializers import UserSerializer
-from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import CreateModelMixin
 
 
-class RegistrationApiView(GenericAPIView):
+class UserView(GenericViewSet, CreateModelMixin):
 
     serializer_class = UserSerializer
-
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        print(request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)

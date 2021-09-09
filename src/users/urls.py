@@ -1,6 +1,5 @@
-from django.urls import path
-from .views import RegistrationApiView
+from src.users.views import UserView
+from rest_framework.routers import SimpleRouter
 
-urlpatterns = [
-    path('auth/register', RegistrationApiView.as_view())
-]
+users_router = SimpleRouter()
+users_router.register(r'users', UserView, basename='users')
