@@ -1,6 +1,6 @@
-from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 from src.users.models import User
+from django.contrib.auth.password_validation import validate_password
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -9,10 +9,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('first_name', 'last_name', 'password', 'email')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate(self, data):
-        if len(data.get('password')) < 6:
-            raise ValidationError('Password too short')
-        return data
+    def validate_password(self, password):
+        user = self.context['request'].user
+        validate_password(password, user=user)
+        return password
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
