@@ -14,9 +14,6 @@ class UserView(GenericViewSet, CreateModelMixin):
         'create': (AllowAny,)
     }
 
-    def get_serializer_class(self):
-        return self.serializers.get(self.action, self.serializers['default'])
-
     def get_permissions(self):
         self.permission_classes = self.permissions.get(
             self.action, self.permissions['default'])
