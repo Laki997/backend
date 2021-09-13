@@ -8,10 +8,7 @@ from .permissions import IsUserOrReadOnly
 class UserView(GenericViewSet, CreateModelMixin):
 
     serializer_class = UserSerializer
-    serializers = {
-        'default': UserSerializer,
 
-    }
     permissions = {
         'default': (IsUserOrReadOnly,),
         'create': (AllowAny,)
