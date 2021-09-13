@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'src.users',
+    'src.movies',
     'rest_framework_simplejwt'
 ]
 
