@@ -1,13 +1,12 @@
 from src.movies.serializers import MovieSerializer
-from rest_framework.mixins import CreateModelMixin, ListModelMixin
+
 from rest_framework.viewsets import ModelViewSet
 from .models import Movie
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
-class MovieViewSet(ModelViewSet, CreateModelMixin,
-                   ListModelMixin):
-
+class MovieViewSet(ModelViewSet):
+               
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
 
