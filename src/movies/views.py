@@ -12,7 +12,6 @@ class MovieViewSet(ModelViewSet):
 
     permissions = {
         'default': (IsAuthenticated, ),
-        'create': (AllowAny, )
     }
 
     def get_permissions(self):
