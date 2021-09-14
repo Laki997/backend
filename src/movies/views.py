@@ -1,16 +1,22 @@
 from src.movies.serializers import MovieSerializer
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import ModelViewSet
 from .models import Movie
-from .permissions import MoviePermissions
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
-class MovieViewSet(GenericViewSet, CreateModelMixin,
+class MovieViewSet(ModelViewSet, CreateModelMixin,
                    ListModelMixin):
 
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    permission_classes = [MoviePermissions, ]
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+    permissions = {
+        'default': (IsAuthenticated, ),
+        'create': (AllowAny, )
+    }
+
+    def get_permissions(self):
+        self.permission_classes = self.permissions.get(
+           self.action, self.permissions['default'])
+        return super().get_permissions()
