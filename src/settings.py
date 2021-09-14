@@ -25,6 +25,7 @@ SECRET_KEY = 'h^oh$tc4s(kl(j@^p_!(fn3^uks%-(elp8$-015vprd!*md%)p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CORS_ALLOW_ALL_ORIGINS = True
 ALLOWED_HOSTS = ['*']
 
 
@@ -136,4 +137,3 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CORS_ALLOW_ALL_ORIGINS = True

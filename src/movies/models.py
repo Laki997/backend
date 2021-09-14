@@ -10,9 +10,9 @@ class Movie(models.Model):
         SF = GENRE_CHOICES.get('SF')
         HOROR = GENRE_CHOICES.get('HOROR')
 
-    title = models.CharField(max_length=255, Required=True, unique=True)
-    cover_image = models.URLField(max_length=200, Required=True)
-    description = models.CharField(max_length=255, Required=True)
-    genre = models.CharField(max_length=20, Required=True,
+    title = models.CharField(max_length=255, unique=True)
+    cover_image = models.URLField(max_length=200, )
+    description = models.CharField(max_length=255,)
+    genre = models.CharField(max_length=20,
                              choices=MoviesGenre.choices,
                              default=MoviesGenre.DRAMA)
