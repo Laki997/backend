@@ -1,12 +1,11 @@
 from src.movies.serializers import MovieSerializer
-
 from rest_framework.viewsets import ModelViewSet
 from .models import Movie
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
 
 class MovieViewSet(ModelViewSet):
-               
+
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
 
