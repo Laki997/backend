@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,6 +26,7 @@ SECRET_KEY = 'h^oh$tc4s(kl(j@^p_!(fn3^uks%-(elp8$-015vprd!*md%)p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CORS_ALLOW_ALL_ORIGINS = True
 ALLOWED_HOSTS = ['*']
 
 
@@ -136,4 +138,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CORS_ALLOW_ALL_ORIGINS = True
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
+}
