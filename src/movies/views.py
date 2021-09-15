@@ -2,12 +2,15 @@ from src.movies.serializers import MovieSerializer
 from rest_framework.viewsets import ModelViewSet
 from .models import Movie
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters
 
 
 class MovieViewSet(ModelViewSet):
 
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['^title']
 
     permissions = {
         'default': (IsAuthenticated, ),
