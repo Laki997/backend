@@ -1,4 +1,3 @@
-
 from .views import MovieViewSet
 from rest_framework import routers
 

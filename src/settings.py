@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'src.users',
     'src.movies',
+    'src.comments',
     'rest_framework_simplejwt',
     'django_filters',
 ]
