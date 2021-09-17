@@ -19,7 +19,6 @@ class CommentsViewSet(ModelViewSet):
         return super().get_permissions()
 
     def create(self, request, *args, **kwargs):
-        print(request)
         user = request.user
         serializer = CommentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
