@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from src.movies.serializers import MovieReactionSeralizer, MovieSerializer
 from rest_framework.viewsets import ModelViewSet
 from .models import Movie, MovieReaction
@@ -27,25 +28,20 @@ class MovieViewSet(ModelViewSet):
            self.action, self.permissions['default'])
         return super().get_permissions()
 
-    @action(detail=False, methods=['POST'], url_name='reaction',
-            url_path='reaction',
-            permission_classes=[IsAuthenticated],
-            authentication_classes=[JWTAuthentication])
-    def reaction(self, request, movieId):
-         
-        user = request.user.id
+    @action(detail=False, methods=['POST'], url_path='reaction',
+            url_name='reaction', authentication_classes=[JWTAuthentication],
+            permission_classes=[IsAuthenticated])
+    def reaction(self, request):
+        serializer = MovieReactionSeralizer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        data = serializer.validated_data
         reaction_object = MovieReaction.objects.filter(user=user,
-                                                       movie=movieId).first()
-        new_reaction = request.data['reaction']
-        if reaction_object is not None:
-            reaction_object.reaction = new_reaction if new_reaction != reaction_object.reaction else None    
-        else:
-            reaction_object = MovieReaction.objects.create(
-                user=request.user.id,
-                movie=movieId,
-                reaction=new_reaction
-            )
-
-        reaction_object.save()
-        serializer = MovieReactionSeralizer(reaction_object)
-        return Response(serializer.data)
+                                                       movie=data['movie']
+                                                       ).first()
+        data['user'] = user
+        if reaction_object is not None and data['reaction'] == reaction_object.reaction:
+            data['reaction'] = None
+        reaction_object, created = MovieReaction.objects.update_or_create(user=user,
+                                                                          movie=data['movie'], defaults=data)
+        return Response(MovieReactionSeralizer(reaction_object).data)

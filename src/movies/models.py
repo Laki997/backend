@@ -1,6 +1,8 @@
+
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.enums import TextChoices
+from django.db.models.fields import Field
 from .constants import GENRE_CHOICES
 from src.users.models import User
 
@@ -17,12 +19,18 @@ class Movie(models.Model):
     description = models.CharField(max_length=255,)
     genre = models.CharField(max_length=20,
                              choices=MoviesGenre.choices,
-                             default=MoviesGenre.DRAMA)
+                            default=MoviesGenre.DRAMA)
+  
+    def likes(self):
+        return self.reactions.filter(reaction=True).count()
+    
+    def dislikes(self):
+        return self.reactions.filter(reaction=False).count()
 
 
 class MovieReaction(models.Model):
     user = models.ForeignKey(User, on_delete=CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=CASCADE)
+    movie = models.ForeignKey(Movie, related_name='reactions', on_delete=CASCADE)
     reaction = models.BooleanField(null=True)
 
     class Meta:
