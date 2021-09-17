@@ -28,6 +28,13 @@ class MovieViewSet(ModelViewSet):
            self.action, self.permissions['default'])
         return super().get_permissions()
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.view_count += 1
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     @action(detail=False, methods=['POST'], url_path='reaction',
             url_name='reaction', authentication_classes=[JWTAuthentication],
             permission_classes=[IsAuthenticated])
