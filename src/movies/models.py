@@ -2,7 +2,7 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.enums import TextChoices
-from django.db.models.fields import Field
+from django.db.models.fields import Field, PositiveBigIntegerField
 from .constants import GENRE_CHOICES
 from src.users.models import User
 
@@ -17,6 +17,7 @@ class Movie(models.Model):
     title = models.CharField(max_length=255, unique=True)
     cover_image = models.URLField(max_length=200, )
     description = models.CharField(max_length=255,)
+    view_count = models.PositiveBigIntegerField(default=0)
     genre = models.CharField(max_length=20,
                              choices=MoviesGenre.choices,
                             default=MoviesGenre.DRAMA)
