@@ -43,5 +43,7 @@ class MovieViewSet(ModelViewSet):
         if reaction_object is not None and data['reaction'] == reaction_object.reaction:
             data['reaction'] = None
         reaction_object, created = MovieReaction.objects.update_or_create(user=user,
-                                                                          movie=data['movie'], defaults=data)
-        return Response(MovieReactionSeralizer(reaction_object).data)
+                                                                        movie=data['movie'], defaults=data)
+
+        movie = Movie.objects.get(id=data['movie'].id)
+        return Response(MovieSerializer(movie).data)
