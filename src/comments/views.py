@@ -5,10 +5,14 @@ from src.comments.models import Comments
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 class CommentsViewSet(ModelViewSet):
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['movie']
     permissions = {
         'default': (IsAuthenticated, ),
     }
@@ -25,5 +29,6 @@ class CommentsViewSet(ModelViewSet):
         data = serializer.data
         movie = Movie.objects.get(id=data['movie'])
         data['user'] = user
-        instance = Comments.objects.create(user=data['user'], movie=movie, content=data['content'])
+        instance = Comments.objects.create(user=data['user'], movie=movie,
+                                           content=data['content'])
         return Response(CommentSerializer(instance).data)
