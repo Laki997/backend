@@ -2,7 +2,7 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.enums import TextChoices
-from django.db.models.fields import Field, PositiveBigIntegerField
+from django.db.models.fields import Field, PositiveBigIntegerField, related
 from .constants import GENRE_CHOICES
 from src.users.models import User
 
@@ -31,11 +31,23 @@ class Movie(models.Model):
     def comments(self):
         return self.body.all()
 
+    def gledao(self):
+        return self.watch
+
 
 class MovieReaction(models.Model):
     user = models.ForeignKey(User, on_delete=CASCADE)
     movie = models.ForeignKey(Movie, related_name='reactions', on_delete=CASCADE)
     reaction = models.BooleanField(null=True)
+
+    class Meta:
+        unique_together = ('user', 'movie')
+
+
+class WatchList(models.Model):
+    user = models.ForeignKey(User, on_delete=CASCADE)
+    movie = models.ForeignKey(Movie, related_name="watch", on_delete=CASCADE)
+    watched = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('user', 'movie')
