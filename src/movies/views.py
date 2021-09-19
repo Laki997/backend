@@ -9,6 +9,7 @@ from rest_framework.decorators import action, authentication_classes, permission
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from src.movies.models import MovieReaction
+from django.db.models import Count, Q
 
 
 class MovieViewSet(ModelViewSet):
@@ -70,3 +71,13 @@ class MovieViewSet(ModelViewSet):
         watchlist_object, created = WatchList.objects.update_or_create(user=user, movie=data['movie'], defaults=data)
         movie = Movie.objects.get(id=data['movie'].id)
         return Response(MovieSerializer(movie).data)
+
+    @action(detail=False, methods=['GET'], url_name='popular',
+            url_path='popular',
+            authentication_classes=[JWTAuthentication], permission_classes=[IsAuthenticated])
+    def popular(self, request):
+        popular_movies = Movie.objects.annotate(movie_likes=Count('reactions',
+                                                filter=Q(reactions__reaction=True))).order_by('-movie_likes')[:10]
+        serializer = MovieSerializer(popular_movies, many=True)
+        return Response(serializer.data)
+
