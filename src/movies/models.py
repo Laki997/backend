@@ -31,7 +31,7 @@ class Movie(models.Model):
     def comments(self):
         return self.body.all()
 
-    def gledao(self):
+    def isWatched(self):
         return self.watch
 
 
