@@ -55,17 +55,16 @@ class MovieViewSet(ModelViewSet):
         movie = Movie.objects.get(id=data['movie'].id)
         return Response(MovieSerializer(movie).data)
 
-    @action(detail=False, methods=['POST'], url_name="watchlist", url_path='watchlist', authentication_classes=[JWTAuthentication], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['POST'], url_name="watchlist", url_path='watchlist',
+            authentication_classes=[JWTAuthentication],
+            permission_classes=[IsAuthenticated])
     def watchlist(self, request):
-        print(request)
         serializer = WatchListSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
         data = serializer.validated_data
         watchlist_object = WatchList.objects.filter(user=user, movie=data['movie']).first()
         data['user'] = user
-        if watchlist_object is not None and data['watched'] == watchlist_object.watched:
-            data['watched'] != watchlist_object.watched 
 
         watchlist_object, created = WatchList.objects.update_or_create(user=user, movie=data['movie'], defaults=data)
         movie = Movie.objects.get(id=data['movie'].id)
