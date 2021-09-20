@@ -17,5 +17,5 @@ router.registry.extend(comment_router.registry)
 urlpatterns = [
     path('api/', include(router.urls)),
     path('login/', TokenObtainPairView.as_view()),
-    path('refresh/token', TokenRefreshView.as_view())
+    path('refresh/token', TokenRefreshView.as_view()),
 ]

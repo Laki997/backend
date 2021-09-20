@@ -1,7 +1,8 @@
+from django.db.models.expressions import RawSQL
 from rest_framework import serializers
-from src.movies.serializers import MovieReactionSeralizer, MovieSerializer
+from src.movies.serializers import MovieReactionSeralizer, MovieSerializer, WatchListSerializer
 from rest_framework.viewsets import ModelViewSet
-from .models import Movie, MovieReaction
+from .models import Movie, MovieReaction, WatchList
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -9,6 +10,7 @@ from rest_framework.decorators import action, authentication_classes, permission
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from src.movies.models import MovieReaction
+from django.db.models import Count, Q
 
 
 class MovieViewSet(ModelViewSet):
@@ -54,3 +56,36 @@ class MovieViewSet(ModelViewSet):
 
         movie = Movie.objects.get(id=data['movie'].id)
         return Response(MovieSerializer(movie).data)
+
+    @action(detail=False, methods=['POST'], url_name="watchlist", url_path='watchlist',
+            authentication_classes=[JWTAuthentication],
+            permission_classes=[IsAuthenticated])
+    def watchlist(self, request):
+        serializer = WatchListSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        data = serializer.validated_data
+        watchlist_object = WatchList.objects.filter(user=user, movie=data['movie']).first()
+        data['user'] = user
+
+        watchlist_object, created = WatchList.objects.update_or_create(user=user, movie=data['movie'], defaults=data)
+        movie = Movie.objects.get(id=data['movie'].id)
+        return Response(MovieSerializer(movie).data)
+
+    @action(detail=False, methods=['GET'], url_name='popular',
+            url_path='popular',
+            authentication_classes=[JWTAuthentication], permission_classes=[IsAuthenticated])
+    def popular(self, request):
+        popular_movies = Movie.objects.annotate(movie_likes=Count('reactions',
+                                                filter=Q(reactions__reaction=True))).order_by('-movie_likes')[:10]
+        serializer = MovieSerializer(popular_movies, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['GET'], url_path=r'related/(?P<pk>\w+)', url_name='related',
+            permission_classes=[IsAuthenticated],
+             authentication_classes=[JWTAuthentication])
+    def related(self, request, pk):
+        movie = Movie.objects.get(id=pk)     
+        related_movies = Movie.objects.filter(genre=movie.genre).exclude(id=pk).order_by('title')[:10]
+        serializer = MovieSerializer(related_movies, many=True)
+        return Response(serializer.data)
