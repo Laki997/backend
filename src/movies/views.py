@@ -1,4 +1,5 @@
 from django.db.models.expressions import RawSQL
+from django.http.response import HttpResponse
 from rest_framework import serializers
 from src.movies.serializers import MovieReactionSeralizer, MovieSerializer, WatchListSerializer
 from rest_framework.viewsets import ModelViewSet
@@ -11,6 +12,10 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from src.movies.models import MovieReaction
 from django.db.models import Count, Q
+from django.core.mail import send_mail 
+
+
+
 
 
 class MovieViewSet(ModelViewSet):
@@ -89,3 +94,13 @@ class MovieViewSet(ModelViewSet):
         related_movies = Movie.objects.filter(genre=movie.genre).exclude(id=pk).order_by('title')[:10]
         serializer = MovieSerializer(related_movies, many=True)
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        title = request.data['title']
+        description = request.data['description']
+        genre = request.data['genre'] 
+        message = 'New movie is added: Title: ' + ' ' + title + ' ' + 'Description: ' + ' ' + description +  ' ' +  'Genre: ' + genre
+        send_mail('New Movie', message , 'lazarkalajdzic@gmail.com', ['brankomirnic@gmail.comn'])
+        return super().create(request, *args, **kwargs)
+
+

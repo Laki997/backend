@@ -1,3 +1,4 @@
+
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from src.users.urls import users_router
@@ -18,4 +19,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('login/', TokenObtainPairView.as_view()),
     path('refresh/token', TokenRefreshView.as_view()),
+   
 ]

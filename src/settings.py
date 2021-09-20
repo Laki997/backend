@@ -163,3 +163,8 @@ STATIC_URL = '/static/'
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
 }
+
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '6f67c4e9951ca8'
+EMAIL_HOST_PASSWORD = '4dac92725dc8a0'
+EMAIL_PORT = '2525'
