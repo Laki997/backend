@@ -1,3 +1,4 @@
+from django.db.models.expressions import RawSQL
 from rest_framework import serializers
 from src.movies.serializers import MovieReactionSeralizer, MovieSerializer, WatchListSerializer
 from rest_framework.viewsets import ModelViewSet
@@ -80,4 +81,12 @@ class MovieViewSet(ModelViewSet):
                                                 filter=Q(reactions__reaction=True))).order_by('-movie_likes')[:10]
         serializer = MovieSerializer(popular_movies, many=True)
         return Response(serializer.data)
-
+    
+    @action(detail=False, methods=['GET'], url_path=r'related/(?P<pk>\w+)', url_name='related',
+            permission_classes=[IsAuthenticated],
+             authentication_classes=[JWTAuthentication])
+    def related(self, request, pk):
+        movie = Movie.objects.get(id=pk)     
+        related_movies = Movie.objects.filter(genre=movie.genre).exclude(id=pk).order_by('title')[:10]
+        serializer = MovieSerializer(related_movies, many=True)
+        return Response(serializer.data)
