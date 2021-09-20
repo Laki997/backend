@@ -86,8 +86,7 @@ class MovieViewSet(ModelViewSet):
             permission_classes=[IsAuthenticated],
              authentication_classes=[JWTAuthentication])
     def related(self, request, pk):
-        print(request)
         movie = Movie.objects.get(id=pk)     
-        related_movies = Movie.objects.filter(genre=movie.genre).order_by('title')[:10]
+        related_movies = Movie.objects.filter(genre=movie.genre).exclude(id=pk).order_by('title')[:10]
         serializer = MovieSerializer(related_movies, many=True)
         return Response(serializer.data)
