@@ -67,6 +67,10 @@ INSTALLED_APPS = [
     'src.comments',
     'rest_framework_simplejwt',
     'django_filters',
+    'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf',
+
+
 ]
 
 MIDDLEWARE = [
@@ -122,6 +126,12 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
    
+}
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    },
 }
 
 

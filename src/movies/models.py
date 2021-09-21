@@ -21,16 +21,16 @@ class Movie(models.Model):
     genre = models.CharField(max_length=20,
                              choices=MoviesGenre.choices,
                              default=MoviesGenre.DRAMA)
-  
+    @property
     def likes(self):
         return self.reactions.filter(reaction=True).count()
-    
+    @property
     def dislikes(self):
         return self.reactions.filter(reaction=False).count()
-    
+    @property
     def comments(self):
         return self.body.all()
-
+    @property
     def isWatched(self):
         return self.watch
 
