@@ -1,10 +1,13 @@
 
-from django.db import models
+from django.db import connections, models
 from django.db.models.deletion import CASCADE
 from django.db.models.enums import TextChoices
 from django.db.models.fields import Field, PositiveBigIntegerField, related
 from .constants import GENRE_CHOICES
 from src.users.models import User
+from django_elasticsearch_dsl.registries import registry
+from elasticsearch_dsl.connections import connections
+# connections.create_connection(hosts=['0.0.0.0'])
 
 
 class Movie(models.Model):
@@ -27,9 +30,7 @@ class Movie(models.Model):
     @property
     def dislikes(self):
         return self.reactions.filter(reaction=False).count()
-    @property
-    def comments(self):
-        return self.body.all()
+
     @property
     def isWatched(self):
         return self.watch

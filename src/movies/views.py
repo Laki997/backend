@@ -1,5 +1,7 @@
+from django_filters.filters import Filter
 from src.settings import CONFIGURABLE_EMAIL
-
+from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
+from src.movies.documents import MovieDocument
 from src.movies.serializers import MovieReactionSeralizer, MovieSerializer, WatchListSerializer
 from rest_framework.viewsets import ModelViewSet
 from .models import Movie, MovieReaction, WatchList
@@ -12,6 +14,17 @@ from rest_framework.response import Response
 from src.movies.models import MovieReaction
 from django.db.models import Count, Q
 from django.core.mail import send_mail
+from django_elasticsearch_dsl_drf.filter_backends import (FilteringFilterBackend, 
+                                                          CompoundSearchFilterBackend)
+
+
+class ElasticViewSet(DocumentViewSet):
+        document = MovieDocument
+        queryset = Movie.objects.all()
+        serializer_class = MovieSerializer
+        filter_backends = [CompoundSearchFilterBackend, FilteringFilterBackend]
+        search_fields = {'title': {'fuzziness': 'AUTO'}}
+        filter_fields = {'genre': 'genre.raw'}
 
 
 class MovieViewSet(ModelViewSet):
@@ -81,7 +94,7 @@ class MovieViewSet(ModelViewSet):
                                                 filter=Q(reactions__reaction=True))).order_by('-movie_likes')[:10]
         serializer = MovieSerializer(popular_movies, many=True)
         return Response(serializer.data)
-    
+ 
     @action(detail=False, methods=['GET'], url_path=r'related/(?P<pk>\w+)',
             url_name='related',
             permission_classes=[IsAuthenticated],
