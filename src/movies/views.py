@@ -93,7 +93,6 @@ class MovieViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        print(CONFIGURABLE_EMAIL)
         title = request.data['title']
         description = request.data['description']
         genre = request.data['genre'] 
