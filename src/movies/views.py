@@ -2,9 +2,9 @@ from django_filters.filters import Filter
 from src.settings import CONFIGURABLE_EMAIL
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
 from src.movies.documents import MovieDocument
-from src.movies.serializers import MovieReactionSeralizer, MovieSerializer, WatchListSerializer
+from src.movies.serializers import ImageSerializer, MovieReactionSeralizer, MovieSerializer, WatchListSerializer
 from rest_framework.viewsets import ModelViewSet
-from .models import Movie, MovieReaction, WatchList
+from .models import Image, Movie, MovieReaction, WatchList
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -35,14 +35,14 @@ class MovieViewSet(ModelViewSet):
     search_fields = ['^title']
     filterset_fields = ['genre']
 
-    permissions = {
-        'default': (IsAuthenticated, ),
-    }
+    # permissions = {
+    #     'default': (IsAuthenticated, ),
+    # }
 
-    def get_permissions(self):
-        self.permission_classes = self.permissions.get(
-           self.action, self.permissions['default'])
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     self.permission_classes = self.permissions.get(
+    #        self.action, self.permissions['default'])
+    #     return super().get_permissions()
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -106,10 +106,25 @@ class MovieViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        title = request.data['title']
-        description = request.data['description']
-        genre = request.data['genre'] 
-        message = 'New movie is added: Title: ' + ' ' + title + ' ' + 'Description: ' + ' ' + description +  ' ' +  'Genre: ' + genre
-        send_mail('New Movie', message , 'lazarkalajdzic@gmail.com',
-                 [CONFIGURABLE_EMAIL])
+        
+        data = request.data
+        data_image = {'image': data['image'], 'thumbnail': data['image']}
+        image_thumbnail_pair = ImageSerializer(data=data_image)
+        image_thumbnail_pair.is_valid(raise_exception=True)
+        image_thumbnail_pair.save()
+
+        new_movie = {'cover_image': data_image, 'genre': data['genre'], 'description': data['description'], 'title': data['title']}
+
+        movie = MovieSerializer(data=new_movie)
+        movie.is_valid(raise_exception=True)
+        movie.save()
+        return Response(movie.data)
+        
+
+        # title = request.data['title']
+        # description = request.data['description']
+        # genre = request.data['genre'] 
+        # message = 'New movie is added: Title: ' + ' ' + title + ' ' + 'Description: ' + ' ' + description +  ' ' +  'Genre: ' + genre
+        # send_mail('New Movie', message , 'lazarkalajdzic@gmail.com',
+        #          [CONFIGURABLE_EMAIL])
         return super().create(request, *args, **kwargs)

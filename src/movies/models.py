@@ -1,13 +1,16 @@
 
 from django.db import connections, models
-from django.db.models.deletion import CASCADE
+from django.db.models.deletion import CASCADE, RESTRICT
 from django.db.models.enums import TextChoices
 from django.db.models.fields import Field, PositiveBigIntegerField, related
 from .constants import GENRE_CHOICES
 from src.users.models import User
-from django_elasticsearch_dsl.registries import registry
-from elasticsearch_dsl.connections import connections
-# connections.create_connection(hosts=['0.0.0.0'])
+from easy_thumbnails import fields
+
+
+class Image(models.Model):
+    image = fields.ThumbnailerImageField(upload_to='full-size/', resize_source=dict(size=(400, 400)))
+    thumbnail = fields.ThumbnailerImageField(upload_to='thumbnails/', resize_source=dict(size=(200,200)))
 
 
 class Movie(models.Model):
@@ -18,7 +21,7 @@ class Movie(models.Model):
         HOROR = GENRE_CHOICES.get('HOROR')
 
     title = models.CharField(max_length=255, unique=True)
-    cover_image = models.URLField(max_length=200, )
+    cover_image = models.OneToOneField(Image, on_delete=RESTRICT)
     description = models.CharField(max_length=255,)
     view_count = models.PositiveBigIntegerField(default=0)
     genre = models.CharField(max_length=20,

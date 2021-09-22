@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
+    'easy_thumbnails'
     
 
 ]
@@ -175,6 +176,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIAL_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'movies/media/')
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
