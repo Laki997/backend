@@ -35,14 +35,14 @@ class MovieViewSet(ModelViewSet):
     search_fields = ['^title']
     filterset_fields = ['genre']
 
-    permissions = {
-        'default': (IsAuthenticated, ),
-    }
+    # permissions = {
+    #     'default': (IsAuthenticated, ),
+    # }
 
-    def get_permissions(self):
-        self.permission_classes = self.permissions.get(
-           self.action, self.permissions['default'])
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     self.permission_classes = self.permissions.get(
+    #        self.action, self.permissions['default'])
+    #     return super().get_permissions()
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

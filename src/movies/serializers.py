@@ -25,7 +25,8 @@ class WatchListSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     isWatched = WatchListSerializer(many=True, read_only=True)
     cover_image = ImageSerializer(read_only=True)
+    cover_image_id = serializers.PrimaryKeyRelatedField(source='cover_image', queryset = Image.objects.all(), write_only=True)
 
     class Meta:
         model = Movie
-        fields = ('id', 'title', 'cover_image', 'description', 'genre', 'likes', 'dislikes', 'view_count','isWatched' )
+        fields = ('id', 'title', 'cover_image_id', 'cover_image', 'description', 'genre', 'likes', 'dislikes', 'view_count','isWatched' )
