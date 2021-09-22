@@ -17,9 +17,8 @@ class WatchListSerializer(serializers.ModelSerializer):
 
 
 class MovieSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True, read_only=True)
     isWatched = WatchListSerializer(many=True, read_only=True)
 
     class Meta:
         model = Movie
-        fields = ('id', 'title', 'cover_image', 'description', 'genre', 'likes', 'dislikes', 'view_count','comments','isWatched' )
+        fields = ('id', 'title', 'cover_image', 'description', 'genre', 'likes', 'dislikes', 'view_count','isWatched' )
